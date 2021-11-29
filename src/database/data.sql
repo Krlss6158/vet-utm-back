@@ -63,9 +63,10 @@ CREATE TABLE pets (
 
 
 CREATE TABLE images (
-    id SERIAL PRIMARY KEY,
+    id TEXT PRIMARY KEY,
+    name TEXT,
     url TEXT NOT NULL, 
-    id_pet CHAR(16) NOT NULL, 
+    id_pet CHAR(16), 
     FOREIGN KEY (id_pet) REFERENCES pets(id)
 );
 

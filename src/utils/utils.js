@@ -1,3 +1,4 @@
+import fs from 'fs';
 export const createIdPet = (name, sex, birth, castrated, race, specie) => {
     /* name, sex, birth, castrated, race, specie */
     /* PRIMERA LETRA NOMBRE + AÑO + MES + DIA + SEXO + AÑO NACIMIENTO + CASTRADO + PRIMERA LETRA RAZA + PRIMERA LETRA ESPECIE  */
@@ -8,7 +9,7 @@ export const createIdPet = (name, sex, birth, castrated, race, specie) => {
 
 }
 
-export const getFirstChar = (name) => {    
+export const getFirstChar = (name) => {
     return (`${name}`).substr(0, 1);
 }
 
@@ -20,4 +21,25 @@ export const getCurrentDate = () => {
     const d = new Date();
     const Months = ['E', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
     return `${d.getFullYear()}${Months[d.getMonth()]}${("00" + d.getDate()).slice(-2)}`;
+}
+
+
+export const uploadFileServer = (name, imagen) => {
+    try {
+        fs.writeFile("src/public/upload/" + name, imagen, 'base64', e => {
+            if (e) console.log(e); 
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export const deleteFileServer = (name) => {
+    try {
+        fs.unlink("src/public/upload/" + name, e => {
+            if (e) console.log(e); 
+        });
+    } catch (error) {
+
+    }
 }

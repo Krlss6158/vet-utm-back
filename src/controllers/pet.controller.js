@@ -4,7 +4,8 @@ import Cantons from '../models/canton.model';
 import Provinces from '../models/province.model';
 import Imagenes from '../models/imagenes.model';
 
-import { createIdPet } from '../utils/utils';
+import { createIdPet, uploadFileServer, deleteFileServer } from '../utils/utils';
+import { deleteFile, generatePublicUrl, uploadFile as uploadFileGoogle } from './googleDriver';
 
 import { Op } from 'sequelize';
 
@@ -273,44 +274,19 @@ export const getAllChildsByPet = async (req, res) => {
 
 export const createLostPet = async (req, res) => {
 
-    const {
-        id_user, avatar_user, first_name, last_name, email, id_canton, address, phone,
-        id_pet, avatar_pet, name, birth, description, sex, castrated, specie, race, lost, id_pet_mother, id_pet_pather,
-        images
-    } = req.body;
-
+    const { user, pet, images } = req.body;
 
     try {
-        var user;
-        var pet;
-
-        user = id_user && await Users.findOne({ where: { id: id_user } })
-        if (user === null) {
-            if (id_user && first_name && last_name && phone && address && id_canton && email)
-                await Users.create({ id: id_user, avatar: avatar_user, first_name, last_name, email, id_canton, address, phone })
-        }
-
-        var pet_id = id_pet ? id_pet : createIdPet(name, sex, birth, castrated, race, specie);
-
-        pet = id_pet && await Pets.findOne({ where: { id: pet_id } })
-
-        if (pet === null) await Pets.create({ id: pet_id, avatar: avatar_pet, name, birth, description, sex, castrated, specie, race, lost, id_user, id_pet_mother, id_pet_pather })
-
-
-        var imagenes; 
+        //Create images in server
+        uploadFileServer(images[0].name, images[0].base64);
+        //Upload image server in google drive
+        const resUG = await uploadFileGoogle(images[0].name);
+        const resURLG = await generatePublicUrl(resUG.id);
+        //delete image in server
+        deleteFileServer(images[0].name);
         
-        images.forEach(async (e) => {
-            imagenes = await Imagenes.create({ url: e.url, id_pet: e.id_pet }, { fields: ['url', 'id_pet'] })
-        });
-
-        res.status(200).json({ msg: 'pasaste' })
-        if (imagenes) {
-            res.status(200).json({
-                user,
-                pet,
-                imagenes
-            })
-        }
+        //http://drive.google.com/uc?export=view&id=
+        console.log(resURLG);
 
     } catch (error) {
         res.status(500).json({

@@ -3,8 +3,11 @@ import { sequelize } from '../database/db-connection';
 
 const Imagenes = sequelize.define('images', {
     id: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         primaryKey: true
+    },
+    name: {
+        type: Sequelize.TEXT
     },
     url: {
         type: Sequelize.TEXT
