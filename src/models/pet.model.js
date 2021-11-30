@@ -9,10 +9,10 @@ const Pets = sequelize.define('pets', {
         primaryKey: true
     },
     avatar: {
-        type: Sequelize.TEXT 
+        type: Sequelize.TEXT
     },
     lost: {
-        type: Sequelize.BOOLEAN 
+        type: Sequelize.BOOLEAN
     },
     name: {
         type: Sequelize.STRING,
@@ -25,19 +25,13 @@ const Pets = sequelize.define('pets', {
     },
     birth: {
         type: Sequelize.DATE,
-        allowNull: false,
     },
     description: {
         type: Sequelize.TEXT,
-        allowNull: false,
     },
     sex: {
         type: Sequelize.STRING,
-        allowNull: false,
         validate: {
-            notNull: {
-                msg: 'Please enter sex pet'
-            },
             isIn: {
                 args: [['m', 'h', 'M', 'H']],
                 msg: 'Must be m (macho), h (hembra)'
@@ -46,33 +40,15 @@ const Pets = sequelize.define('pets', {
     },
     castrated: {
         type: Sequelize.BOOLEAN,
-        allowNull: false,
-        validate: {
-            notNull: {
-                msg: 'Please enter castrated pet'
-            }
-        }
     },
     specie: {
         type: Sequelize.TEXT,
-        allowNull: false,
-        validate: {
-            notNull: {
-                msg: 'Please enter specie pet'
-            },
-        }
     },
     race: {
         type: Sequelize.TEXT,
-        allowNull: false,
-        validate: {
-            notNull: {
-                msg: 'Please enter race pet'
-            },
-        }
     },
     id_user: {
-        type: Sequelize.STRING, 
+        type: Sequelize.STRING,
     },
     createdAt: {
         field: 'createdat',
@@ -92,10 +68,11 @@ const Pets = sequelize.define('pets', {
     {
         hooks: {
             beforeCreate: function (pet) {
-                pet.description = pet.description.toLowerCase();
-                pet.specie = pet.specie.toLowerCase();
-                pet.name = pet.name.toLowerCase();
-                pet.race = pet.race.toLowerCase();
+                pet.id = (`${pet.id}`).toLowerCase();
+                pet.description = (`${pet.description}`).toLowerCase();
+                pet.specie = (`${pet.specie}`).toLowerCase();
+                pet.name = (`${pet.name}`).toLowerCase();
+                pet.race = (`${pet.race}`).toLowerCase();
                 return pet;
             }
         }

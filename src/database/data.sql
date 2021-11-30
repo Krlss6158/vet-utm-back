@@ -41,21 +41,21 @@ CREATE TABLE users (
 CREATE TYPE sex_type AS ENUM ('m', 'h', 'M', 'H');
 
 CREATE TABLE pets (
-    id CHAR(16) PRIMARY KEY,
+    id CHAR(14) PRIMARY KEY,
     avatar TEXT,
     name VARCHAR(255) NOT NULL,
     birth DATE,
     description TEXT,
     sex sex_type,
-    castrated BOOLEAN NOT NULL,
+    castrated BOOLEAN,
     specie TEXT,
     race TEXT,
     lost BOOLEAN,
     createdAt DATE,
     updatedAt DATE,
     id_user VARCHAR(13),
-    id_pet_pather CHAR(19) DEFAULT NULL,
-    id_pet_mother CHAR(19) DEFAULT NULL,
+    id_pet_pather CHAR(14) DEFAULT NULL,
+    id_pet_mother CHAR(14) DEFAULT NULL,
     FOREIGN KEY (id_user) REFERENCES users(id),
     FOREIGN KEY (id_pet_pather) REFERENCES pets(id),
     FOREIGN KEY (id_pet_mother) REFERENCES pets(id)
@@ -63,10 +63,10 @@ CREATE TABLE pets (
 
 
 CREATE TABLE images (
-    id TEXT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name TEXT,
-    url TEXT NOT NULL, 
-    id_pet CHAR(16), 
+    url TEXT, 
+    id_pet CHAR(14), 
     FOREIGN KEY (id_pet) REFERENCES pets(id)
 );
 

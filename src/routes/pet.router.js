@@ -9,7 +9,8 @@ import {
     deletedPet,
     getAllPetsByUser,
     getAllChildsByPet,
-    createLostPet
+    createLostPet,
+    unknownCreateLostPet
 } from '../controllers/pet.controller';
 
 
@@ -26,6 +27,8 @@ router.delete('/', deletedPet);
 router.get('/user/:id', getAllPetsByUser);
 
 router.post('/createLostPet', createLostPet);
+
+router.post('/unknownCreateLostPet', unknownCreateLostPet);
 
 /* router.get('/childs/:id', getAllChildsByPet); */
 

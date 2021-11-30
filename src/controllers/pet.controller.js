@@ -4,9 +4,9 @@ import Cantons from '../models/canton.model';
 import Provinces from '../models/province.model';
 import Imagenes from '../models/imagenes.model';
 
-import { createIdPet, uploadFileServer, deleteFileServer } from '../utils/utils';
+import { createIdPet, uploadFileServer, deleteFileServer, numberRandom, longNumberRandom } from '../utils/utils';
 import { deleteFile, generatePublicUrl, uploadFile as uploadFileGoogle } from './googleDriver';
-
+import { FindOneUser, CreateOneUser, FindOnePet, CreateOnePet } from '../utils/http-utlis';
 import { Op } from 'sequelize';
 
 export const createPet = async (req, res) => {
@@ -80,6 +80,9 @@ export const getOnePet = async (req, res) => {
                             model: Provinces,
                         }
                     }
+                },
+                {
+                    model: Imagenes
                 }
             ]
         });
@@ -271,22 +274,88 @@ export const getAllChildsByPet = async (req, res) => {
 
 }
 
+export const unknownCreateLostPet = async (req, res) => {
+    const { images } = req.body;
+    console.log(images);
+    var id;
+    try {
+
+        do {
+            id = longNumberRandom();
+        } while (await FindOnePet({ id }));
+
+        console.log(id);
+        const newpet = await Pets.create({ id, name: 'desconocido', lost: true }, { fields: ['id', 'name', 'lost'] });
+        console.log(newpet);
+        if (newpet) {
+            images.forEach(async e => {
+                //Create images in server
+                uploadFileServer(e.name, e.base64);
+                //Upload image server in google drive
+                const resUG = await uploadFileGoogle(e.name);
+                const resURLG = await generatePublicUrl(resUG.id);
+                //delete image in server
+                deleteFileServer(e.name);
+                Imagenes.create({ name: resUG.name, url: resURLG, id_pet: id }, { fields: ['name', 'url', 'id_pet'] })
+                //http://drive.google.com/uc?export=view&id=
+                console.log(resURLG);
+            });
+            return res.status(200).json({ message: 'lost pet unknown created!' })
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Something went wrong' })
+    }
+
+}
+
 
 export const createLostPet = async (req, res) => {
 
     const { user, pet, images } = req.body;
+    /* const { id_user, first_name, last_name, email, id_canton, address, phone } = user;
+    const { id_pet, name, birth, description, sex, castrated, specie, race } = pet; */
 
     try {
-        //Create images in server
+        var _user, _pet, id_pet, newID;
+
+        _user = user.user_id && await FindOneUser({ id: user.user_id });
+        if (_user === null) {
+            const _email = user.email && await FindOneUser({ email: user.email });
+            if (_email) {
+                return res.status(500).json({ message: 'El correo ya existe!' });
+            }
+            const _phone = user.phone && await FindOneUser({ phone: user.phone });
+            if (_phone) {
+                return res.status(500).json({ message: 'El telefono ya existe!' });
+            }
+            const newUser = await CreateOneUser(user);
+        } else return res.status(500).json({ message: 'El usuario ya existe!' });
+        _pet = pet.pet_id && await FindOnePet({ id: user.pet_id });
+        if (_pet === null) {
+
+            var generateID = createIdPet(pet.sex, birth, pet.castrated, pet.race, pet.specie);
+            do {
+                newID = `${generateID}${numberRandom()}`
+            } while (FindOnePet({ id: newID }));
+            const newPet = await CreateOnePet(pet);
+        }
+
+        /* //Create images in server
         uploadFileServer(images[0].name, images[0].base64);
         //Upload image server in google drive
         const resUG = await uploadFileGoogle(images[0].name);
         const resURLG = await generatePublicUrl(resUG.id);
         //delete image in server
         deleteFileServer(images[0].name);
-        
+         
         //http://drive.google.com/uc?export=view&id=
-        console.log(resURLG);
+        console.log(resURLG); */
+
+
+        res.status(201).json({
+            message: 'Report created'
+        })
 
     } catch (error) {
         res.status(500).json({
