@@ -1,5 +1,7 @@
 import fs from 'fs';
 import crypto from 'crypto';
+import { hash, compare } from 'bcrypt';
+import jsonwebtoken from 'jsonwebtoken';
 
 export const createIdPet = (name, sex, birth, castrated, race, specie) => {
 
@@ -53,4 +55,16 @@ export const deleteFileServer = (name) => {
     } catch (error) {
 
     }
+}
+
+export const encryp = async (data) => {
+    return await hash(data, parseInt(process.env.BCRYPT_SALT_ROUNDS));
+}
+
+export const decryp = async (body, data) => { 
+    return await compare(body, data);
+}
+
+export const generateToken = async (email) => {
+    return jsonwebtoken.sign({ email: email }, process.env.SECRET, { expiresIn: 60 * 60 * 24 * 365, });
 }

@@ -6,7 +6,9 @@ import {
     getUsers,
     getOneUser,
     deleteUser,
-    updateUser
+    updateUser,
+    createAccount,
+    Login
 } from '../controllers/user.controller';
 
 router.post('/', createUser);
@@ -18,5 +20,10 @@ router.get('/:id', getOneUser);
 router.delete('/:id', deleteUser);
 
 router.put('/:_id', updateUser)
+
+router.post('/signup', createAccount)
+
+router.post('/signin', Login)
+
 
 export default router;

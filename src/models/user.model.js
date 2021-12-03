@@ -41,22 +41,13 @@ const Users = sequelize.define('users', {
         }
     },
     id_canton: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
+        type: Sequelize.INTEGER
     },
     address: {
-        type: Sequelize.STRING,
-        allowNull: false,
+        type: Sequelize.STRING
     },
     phone: {
         type: Sequelize.STRING,
-        allowNull: false,
-        unique: true,
-        validate: {
-            notNull: {
-                msg: 'Please enter phone user'
-            }
-        }
     },
     createdAt: {
         field: 'createdat',
@@ -71,8 +62,7 @@ const Users = sequelize.define('users', {
         hooks: {
             beforeCreate: function (user) {
                 user.first_name = user.first_name.toLowerCase();
-                user.last_name = user.last_name.toLowerCase();
-                user.address = user.address.toLowerCase();
+                user.last_name = user.last_name.toLowerCase(); 
                 user.email = user.email.toLowerCase();
                 return user;
             }

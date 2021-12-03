@@ -30,12 +30,21 @@ CREATE TABLE users (
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
-    id_canton INTEGER NOT NULL,
+    id_canton INTEGER,
     address VARCHAR(255),
     phone VARCHAR(12) UNIQUE,
     createdAt DATE,
     updatedAt DATE,
     FOREIGN KEY (id_canton) REFERENCES cantons (id)
+);
+
+CREATE TABLE accounts (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    role VARCHAR(100) DEFAULT 'client',
+    createdAt DATE,
+    updatedAt DATE
 );
 
 CREATE TYPE sex_type AS ENUM ('m', 'h', 'M', 'H');
